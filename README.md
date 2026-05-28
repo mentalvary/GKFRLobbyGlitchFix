@@ -59,3 +59,18 @@ You can observe this behavior in the game: the countdown on the results screen s
 ### How does this mod fix it?
 
 To fix this, we prevent the game from starting more than one `END_OF_RACE` timer per race. It only triggers for 1st place.
+
+## How to build the mod yourself
+
+If you wish to build the DLL from the source code yourself, instead of trusting the uploaded release, you can do so:
+
+1. Install the latest .NET SDK: https://dotnet.microsoft.com/en-us/download
+2. Clone/download this repo
+3. From your Garfield Kart game folder, in the `Garfield Kart Furious Racing_Data\Managed` directory, copy the `Assembly-CSharp.dll` and `Unity.TextMeshPro.dll` files to a `lib` folder **next** to the repo folder.
+4. In the repo folder, run:
+
+    ```
+    dotnet build --configuration release
+    ```
+
+5. Find the built `GKFRLobbyGlitchFix.dll` under `bin/release/net46`
