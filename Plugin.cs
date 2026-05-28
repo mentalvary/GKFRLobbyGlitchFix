@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using TMPro;
 
 namespace GKFRLobbyGlitchFix;
 
@@ -53,6 +54,14 @@ public class Plugin : BaseUnityPlugin
             }
 
             return true;
+        }
+
+        [HarmonyPatch(typeof(MenuHDMultiplayerMain), "Enter")]
+        [HarmonyPostfix]
+        static void MenuHDMultiplayerMain_Enter(MenuHDMultiplayerMain __instance)
+        {
+            var m_titleLabel = (TMP_Text)typeof(MenuHDMultiplayerMain).GetField("m_titleLabel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(__instance);
+            m_titleLabel.text += " (lobby glitch fixed)";
         }
     }
 
