@@ -34,7 +34,7 @@ C:\Program Files (x86)\Steam\steamapps\common\Garfield Kart - Furious Racing
 
 ### What's the lobby glitch?
 
-What some circles call the "lobby glitch" happens semi-rarely in multiplayer games. It causes you to be stuck on the race results screen, instead of going to the next track after the countdown. You can't exit the game normally, but have to force quit and restart the game.
+What some circles call the "lobby glitch" happens semi-rarely in multiplayer games. When it happens, you get stuck on the race results screen instead of going to the next track after the countdown. You can't exit the game normally, but have to force quit and restart the game.
 
 ### Why does it happen?
 
@@ -50,11 +50,11 @@ Side note: the countdown **display** only activates when there are 15s left, so 
 The lobby glitch happens due to a race condition (pun intended):
 
 * Whenever a player finishes, the `END_OF_RACE` timer is triggered again. Not just for 1st place. Usually, it doesn't actually start, because the `END_OF_RACE` timer from 1st place is already active.
-* After the `END_OF_RACE` timer finishes, it moves to the results screen and triggers the `RESULTS` timer.
-* If a player finishes exactly when the `END_OF_RACE` timer finishes, but before the `RESULTS` timer was started, it will trigger another `END_OF_RACE` timer (which now starts since no other timer is active).
-* This second `END_OF_RACE` timer now blocks the `RESULTS` timer from starting, so the results screen never ends.
+* After the `END_OF_RACE` timer finishes, it moves to the results screen, which triggers the `RESULTS` timer on entering.
+* If a player finishes **exactly** when the `END_OF_RACE` timer finishes, but before the `RESULTS` timer is started, it will trigger another `END_OF_RACE` timer (which now starts since no other timer is active).
+* This second `END_OF_RACE` timer now blocks the `RESULTS` timer from starting, so the results screen never ends. When the second `END_OF_RACE` timer finishes, it does not trigger the `RESULTS` timer again, because the game is already in the results menu.
 
-You can also observe this behavior in the game: the countdown on the results screen starts at 15s instead of 10s (because it's actually the 20s `END_OF_RACE` countdown again, the display only kicking in at 15s).
+You can observe this behavior in the game: the countdown on the results screen starts at 15s instead of 10s (because it's actually the 20s `END_OF_RACE` countdown again, with the display kicking in at 15s).
 
 ### How does this mod fix it?
 
