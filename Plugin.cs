@@ -63,7 +63,7 @@ public partial class Plugin : BaseUnityPlugin
         [HarmonyPostfix]
         static void MenuHDMultiplayerMain_Enter(MenuHDMultiplayerMain __instance)
         {
-            var m_titleLabel = (TMP_Text)typeof(MenuHDMultiplayerMain).GetField("m_titleLabel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(__instance);
+            var m_titleLabel = (TMP_Text)AccessTools.Field(typeof(MenuHDMultiplayerMain), "m_titleLabel").GetValue(__instance);
             m_titleLabel.text += " (lobby glitch fixed)";
         }
     }
