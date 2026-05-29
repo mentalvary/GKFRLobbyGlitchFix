@@ -56,9 +56,46 @@ The lobby glitch happens due to a race condition (pun intended):
 
 You can observe this behavior in the game: the countdown on the results screen starts at 15s instead of 10s (because it's actually the 20s `END_OF_RACE` countdown again, with the display kicking in at 15s).
 
+<details>
+<summary>Log sequence when the glitch doesn't happen</summary>
+
+| Log event | Comment |
+|-------|---------|
+| `InGameGameMode.OnLocalHumanDriverRaceEnded` | 1st place crosses finish line |
+|`StartTimer(END_OF_RACE) - active timer: NONE` | `END_OF_RACE` timer starts. No other timer is active. |
+|`Active timer now: END_OF_RACE` | Game has accepted `END_OF_RACE` timer|
+| `InGameGameMode.OnLocalHumanDriverRaceEnded` | Another player crosses finish line (before the countdown is done) |
+| `StartTimer(END_OF_RACE) - active timer: END_OF_RACE, time left: 3.1504045s` | Another `END_OF_RACE` timer starts, but the first one is still active for 3s.
+|`Active timer now: END_OF_RACE` | Game is still running the original `END_OF_RACE` timer|
+|`Timer END_OF_RACE done.`| Original `END_OF_RACE` timer ends.|
+| `MenuHDResultsLeaderboard.Enter` | Results menu shows |
+| `StartTimer(RESULTS) - active timer: NONE` | `RESULTS` timer starts. No other timer is active. |
+| `Active timer now: RESULTS` | Game has accepted `RESULTS` timer |
+|`Timer RESULTS done.` | `RESULTS` timer ends. Game proceeds to next track |
+
+</details>
+
+<details>
+<summary>Log sequence when the glitch happens</summary>
+
+| Log event | Comment |
+|-------|---------|
+| `InGameGameMode.OnLocalHumanDriverRaceEnded` | 1st place crosses finish line |
+|`StartTimer(END_OF_RACE) - active timer: NONE` | `END_OF_RACE` timer starts. No other timer is active. |
+|`Active timer now: END_OF_RACE` | Game has accepted `END_OF_RACE` timer|
+|`Timer END_OF_RACE done.`| `END_OF_RACE` timer ends.|
+|`InGameGameMode.OnLocalHumanDriverRaceEnded`| **Another player crosses finish line** |
+|`StartTimer(END_OF_RACE) - active timer: NONE`| **`END_OF_RACE` timer starts again, and no other timer is active this time.** |
+|`Active timer now: END_OF_RACE` | **Game has accepted second `END_OF_RACE` timer**|
+| `MenuHDResultsLeaderboard.Enter` | Results menu shows |
+|`StartTimer(RESULTS) - active timer: END_OF_RACE, time left: 19.90011s` |  **`RESULTS` timer starts, but `END_OF_RACE` is active.** |
+| `Active timer now: END_OF_RACE` | **Game did not accept `RESULTS` timer, continues with `END_OF_RESULTS`.** |
+|`Timer END_OF_RACE done.`| `END_OF_RACE` timer ends. Nothing else happens.|
+</details>
+
 ### How does this mod fix it?
 
-To fix this, we prevent the game from starting more than one `END_OF_RACE` timer per race. It only triggers for 1st place.
+The mod changes it so the game only accepts **one** `END_OF_RACE` timer per race (from the first player to cross the finish line). Any subsequent calls are ignored. So there is no chance for a second `END_OF_RACE` to block the `RESULTS` timer.
 
 ## How to build the mod yourself
 
