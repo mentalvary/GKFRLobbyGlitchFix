@@ -11,7 +11,7 @@ This mod fixes the _lobby glitch_ bug in Garfield Kart Furious Racing multiplaye
     * More info: https://docs.bepinex.dev/articles/user_guide/installation/index.html
 2. Download the latest `GKFRLobbyGlitchFix.dll` from the [releases](https://github.com/mentalvary/GKFRLobbyGlitchFix/releases) page.
 3. Copy it into `<game root folder>/BepInEx/plugins/`
-4. If you did everything right, you will see "lobby glitch fixed" in the Online Multiplayer menu title:
+4. If you did everything right, you will see "lobby glitch fix" in the Online Multiplayer menu title:
 
     ![menu](menu.png)
 

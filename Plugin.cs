@@ -62,7 +62,7 @@ public partial class Plugin : BaseUnityPlugin
         [HarmonyPostfix]
         static void MenuHDMultiplayerMain_Enter(TMP_Text ___m_titleLabel)
         {
-            ___m_titleLabel.text += " (lobby glitch fixed)";
+            ___m_titleLabel.text += $" (lobby glitch fix {MyPluginInfo.PLUGIN_VERSION})";
         }
     }
 }
