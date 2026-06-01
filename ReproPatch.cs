@@ -17,7 +17,7 @@ public partial class Plugin
         /// </summary>
         [HarmonyPatch(typeof(RcRace), "GetRaceNbLap")]
         [HarmonyPrefix]
-        static bool RcRace_GetRaceNbLap(RcRace __instance, ref int __result)
+        static bool RcRace_GetRaceNbLap(ref int __result)
         {
             __result = 0;
             return false;
@@ -28,18 +28,16 @@ public partial class Plugin
         /// </summary>
         [HarmonyPatch(typeof(TimerDisplay), "UpdateCustomTimer")]
         [HarmonyPrefix]
-        static bool TimerDisplay_UpdateCustomTimer(TimerDisplay __instance, float seconds)
+        static bool TimerDisplay_UpdateCustomTimer(float seconds, InfoBox ___m_infoBox)
         {
-
-            var m_infoBox = (InfoBox)AccessTools.Field(typeof(TimerDisplay), "m_infoBox").GetValue(__instance);
             string text = seconds.ToString("0.000");
             if (text != "0.000")
             {
-                m_infoBox.SetMonospaceText(text, 0.55f);
+                ___m_infoBox.SetMonospaceText(text, 0.55f);
             }
             else
             {
-                m_infoBox.SetText("");
+                ___m_infoBox.SetText("");
             }
 
             return false;
@@ -50,12 +48,10 @@ public partial class Plugin
         /// </summary>
         [HarmonyPatch(typeof(GkNetMgr), "StartTimer")]
         [HarmonyPrefix]
-        static void GkNetMgr_StartTimer(GkNetMgr __instance, GkNetMgr.TimerState state)
+        static void GkNetMgr_StartTimer(GkNetMgr.TimerState state, GkNetMgr.TimerState ___m_eventTimerState, float ___m_eventTimer)
         {
-            var m_eventTimerState = (GkNetMgr.TimerState)AccessTools.Field(typeof(GkNetMgr), "m_eventTimerState").GetValue(__instance);
-            var m_eventTimer = AccessTools.Field(typeof(GkNetMgr), "m_eventTimer").GetValue(__instance);
-            var timeLeft = m_eventTimerState == GkNetMgr.TimerState.NONE ? "" : $", time left: {m_eventTimer}s";
-            Logger.LogInfo($"StartTimer({state}) - active timer: {m_eventTimerState}{timeLeft}");
+            var timeLeft = ___m_eventTimerState == GkNetMgr.TimerState.NONE ? "" : $", time left: {___m_eventTimer}s";
+            Logger.LogInfo($"StartTimer({state}) - active timer: {___m_eventTimerState}{timeLeft}");
         }
 
         /// <summary>
@@ -63,10 +59,9 @@ public partial class Plugin
         /// </summary>
         [HarmonyPatch(typeof(GkNetMgr), "StartTimer")]
         [HarmonyPostfix]
-        static void GkNetMgr_StartTimer_Postfix(GkNetMgr __instance)
+        static void GkNetMgr_StartTimer_Postfix(GkNetMgr.TimerState ___m_eventTimerState)
         {
-            var m_eventTimerState = AccessTools.Field(typeof(GkNetMgr), "m_eventTimerState");
-            Logger.LogInfo($"Active timer now: {m_eventTimerState?.GetValue(__instance)}");
+            Logger.LogInfo($"Active timer now: {___m_eventTimerState}");
         }
 
         /// <summary>
@@ -75,12 +70,11 @@ public partial class Plugin
         /// </summary>
         [HarmonyPatch(typeof(GkNetMgr), "StopTimer")]
         [HarmonyPrefix]
-        static void GkNetMgr_StopTimer(GkNetMgr __instance)
+        static void GkNetMgr_StopTimer(GkNetMgr.TimerState ___m_eventTimerState)
         {
-            var m_eventTimerState = (GkNetMgr.TimerState)AccessTools.Field(typeof(GkNetMgr), "m_eventTimerState").GetValue(__instance);
-            if (m_eventTimerState != GkNetMgr.TimerState.NONE)
+            if (___m_eventTimerState != GkNetMgr.TimerState.NONE)
             {
-                Logger.LogInfo($"Timer {m_eventTimerState} done.");
+                Logger.LogInfo($"Timer {___m_eventTimerState} done.");
             }
         }
 

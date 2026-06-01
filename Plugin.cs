@@ -58,13 +58,11 @@ public partial class Plugin : BaseUnityPlugin
         /// <summary>
         /// Appends "lobby glitch fixed" to the Online Multiplayer menu title, so it's easier to verify that the patch is active.
         /// </summary>
-        /// <param name="__instance"></param>
         [HarmonyPatch(typeof(MenuHDMultiplayerMain), "Enter")]
         [HarmonyPostfix]
-        static void MenuHDMultiplayerMain_Enter(MenuHDMultiplayerMain __instance)
+        static void MenuHDMultiplayerMain_Enter(TMP_Text ___m_titleLabel)
         {
-            var m_titleLabel = (TMP_Text)AccessTools.Field(typeof(MenuHDMultiplayerMain), "m_titleLabel").GetValue(__instance);
-            m_titleLabel.text += " (lobby glitch fixed)";
+            ___m_titleLabel.text += " (lobby glitch fixed)";
         }
     }
 }
