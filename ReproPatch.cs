@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
+using System;
+using System.Collections;
 using System.Reflection;
+using UnityEngine;
 
 namespace GKFRLobbyGlitchFix;
 
@@ -10,6 +13,8 @@ public partial class Plugin
     /// </summary>
     class ReproPatch
     {
+        private static Boolean delaySynchro = true;
+
         /// <summary>
         /// Set number of laps to 0, meaning race finishes immediately after crossing the start/finish line.
         /// Note: does not carry over correctly for multiplayer players, only for master client. They can still keep driving, but
@@ -79,12 +84,43 @@ public partial class Plugin
         }
 
         /// <summary>
+        /// Simulate players with slow connections by delaying the results synchronization.
+        /// </summary>
+        [HarmonyPatch(typeof(GkNetMgr), "OnEndSynchronization")]
+        [HarmonyPrefix]
+        static bool GkNetMgr_OnEndSynchronization(GkNetMgr __instance, GkNetMgr.SynchroPoint ___m_currentSynchroPoint)
+        {
+            Logger.LogInfo($"OnEndSynchronization({___m_currentSynchroPoint})");
+            if (___m_currentSynchroPoint == GkNetMgr.SynchroPoint.RESULTS_RECEIVED)
+            {
+                if (delaySynchro)
+                {
+                    delaySynchro = false;
+                    Plugin.instance.StartCoroutine(DelayResultsSynchro(__instance));
+                    return false;
+                }
+                delaySynchro = true;
+            }
+
+            return true;
+        }
+        private static IEnumerator DelayResultsSynchro(GkNetMgr __instance)
+        {
+            yield return new WaitForSeconds(2);
+            __instance.OnEndSynchronization();
+        }
+
+        /// <summary>
         /// Simple logging of method calls.
         /// </summary>
         [HarmonyPatch(typeof(InGameGameMode), "Start")]
         [HarmonyPatch(typeof(InGameGameMode), "OnIaNetDriverRaceEnded")]
         [HarmonyPatch(typeof(InGameGameMode), "OnLocalHumanDriverRaceEnded")]
+        [HarmonyPatch(typeof(GkNetMgr), "OnGoToResults")]
         [HarmonyPatch(typeof(MenuHDResultsLeaderboard), "Enter")]
+        [HarmonyPatch(typeof(ResultGameState), "Enter")]
+        [HarmonyPatch(typeof(ResultGameState), "OnNetworkSynchro")]
+        [HarmonyPatch(typeof(ResultGameState), "ShowResults")]
         [HarmonyPrefix]
         static void LogMethodCall(MethodBase __originalMethod)
         {

@@ -10,9 +10,11 @@ public partial class Plugin : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;
     private Harmony harmony;
+    private static Plugin instance;
 
     private void Awake()
     {
+        instance = this;
         Logger = base.Logger;
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
 

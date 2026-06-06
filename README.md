@@ -56,6 +56,8 @@ The lobby glitch happens due to a race condition (pun intended):
 
 You can observe this behavior in the game: the countdown on the results screen starts at 15s instead of 10s (because it's actually the 20s `END_OF_RACE` countdown again, with the display kicking in at 15s).
 
+The race condition risk increases if there are players with slow connections. The game waits for a synchronization point (all players received results from master client) before it shows the results. This makes it much more likely for another player to cross the finish line inbetween the two timers.
+
 <details>
 <summary>Log sequence when the glitch doesn't happen</summary>
 
