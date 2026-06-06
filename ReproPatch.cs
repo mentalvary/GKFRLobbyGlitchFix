@@ -13,7 +13,7 @@ public partial class Plugin
     /// </summary>
     class ReproPatch
     {
-        private static Boolean delaySynchro = true;
+        private static bool delaySynchro = true;
 
         /// <summary>
         /// Set number of laps to 0, meaning race finishes immediately after crossing the start/finish line.
@@ -26,6 +26,30 @@ public partial class Plugin
         {
             __result = 0;
             return false;
+        }
+
+        /// <summary>
+        /// Simulate players with slow connections by delaying the results synchronization.
+        /// </summary>
+        [HarmonyPatch(typeof(GkNetMgr), "OnEndSynchronization")]
+        [HarmonyPrefix]
+        static bool GkNetMgr_OnEndSynchronization(GkNetMgr __instance, GkNetMgr.SynchroPoint ___m_currentSynchroPoint)
+        {
+            Logger.LogInfo($"OnEndSynchronization({___m_currentSynchroPoint})");
+            if (___m_currentSynchroPoint == GkNetMgr.SynchroPoint.RESULTS_RECEIVED && delaySynchro)
+            {
+                Plugin.instance.StartCoroutine(DelayResultsSynchro(__instance));
+                return false;
+            }
+
+            return true;
+        }
+        private static IEnumerator DelayResultsSynchro(GkNetMgr __instance)
+        {
+            yield return new WaitForSeconds(2);
+            delaySynchro = false;
+            __instance.OnEndSynchronization();
+            delaySynchro = true;
         }
 
         /// <summary>
@@ -81,33 +105,6 @@ public partial class Plugin
             {
                 Logger.LogInfo($"Timer {___m_eventTimerState} done.");
             }
-        }
-
-        /// <summary>
-        /// Simulate players with slow connections by delaying the results synchronization.
-        /// </summary>
-        [HarmonyPatch(typeof(GkNetMgr), "OnEndSynchronization")]
-        [HarmonyPrefix]
-        static bool GkNetMgr_OnEndSynchronization(GkNetMgr __instance, GkNetMgr.SynchroPoint ___m_currentSynchroPoint)
-        {
-            Logger.LogInfo($"OnEndSynchronization({___m_currentSynchroPoint})");
-            if (___m_currentSynchroPoint == GkNetMgr.SynchroPoint.RESULTS_RECEIVED)
-            {
-                if (delaySynchro)
-                {
-                    delaySynchro = false;
-                    Plugin.instance.StartCoroutine(DelayResultsSynchro(__instance));
-                    return false;
-                }
-                delaySynchro = true;
-            }
-
-            return true;
-        }
-        private static IEnumerator DelayResultsSynchro(GkNetMgr __instance)
-        {
-            yield return new WaitForSeconds(2);
-            __instance.OnEndSynchronization();
         }
 
         /// <summary>

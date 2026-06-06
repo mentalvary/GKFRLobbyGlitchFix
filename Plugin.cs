@@ -58,7 +58,7 @@ public partial class Plugin : BaseUnityPlugin
         }
 
         /// <summary>
-        /// Appends "lobby glitch fixed" to the Online Multiplayer menu title, so it's easier to verify that the patch is active.
+        /// Appends "lobby glitch fix" to the Online Multiplayer menu title, so it's easier to verify that the patch is active.
         /// </summary>
         [HarmonyPatch(typeof(MenuHDMultiplayerMain), "Enter")]
         [HarmonyPostfix]

@@ -16,7 +16,7 @@ jobs:
     - name: Checkout libs
       uses: actions/checkout@v6
       with:
-        repository: mentalvary/GFKRLibraries
+        repository: mentalvary/GKFRLibraries
         token: ${{ secrets.LIBS_PAT }}
         path: lib
 
