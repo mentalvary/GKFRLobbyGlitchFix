@@ -1,0 +1,7 @@
+{
+    "name": "LobbyGlitchFix",
+    "version_number": "@VERSION@",
+    "website_url": "https://github.com/mentalvary/GKFRLobbyGlitchFix",
+    "description": "Fixes the lobby glitch that causes multiplayer games to get stuck on the results screen.",
+    "dependencies": ["BepInEx-BepInExPack-5.4.2305"]
+}

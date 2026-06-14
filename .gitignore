@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 /git_config.ps1
+/thunderstore/*.zip

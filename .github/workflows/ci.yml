@@ -10,27 +10,39 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    - name: Checkout libs
-      uses: actions/checkout@v6
-      with:
-        repository: mentalvary/GKFRLibraries
-        token: ${{ secrets.LIBS_PAT }}
-        path: lib
+      - name: Checkout libs
+        uses: actions/checkout@v6
+        with:
+          repository: mentalvary/GKFRLibraries
+          token: ${{ secrets.LIBS_PAT }}
+          path: lib
 
-    - name: Install .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+      - name: Install .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Build
-      run: dotnet build --configuration release
+      - name: Build
+        run: dotnet build --configuration release
 
-    - name: Release
-      uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
-      if: github.ref_type == 'tag'
-      with:
-        draft: true
-        files: bin/release/net46/GKFRLobbyGlitchFix.dll
+      - name: Package
+        run: ./thunderstore/build_thunderstore_package.ps1
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: build-artifacts
+          path: |
+            bin/release/net46/GKFRLobbyGlitchFix.dll
+            thunderstore/GKFRLobbyGlitchFix-*.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
+        if: github.ref_type == 'tag'
+        with:
+          draft: true
+          files: |
+            bin/release/net46/GKFRLobbyGlitchFix.dll
+            thunderstore/GKFRLobbyGlitchFix-*.zip

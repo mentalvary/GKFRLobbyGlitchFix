@@ -1,10 +1,17 @@
 # Garfield Kart Furious Racing Lobby Glitch Fix
 
-This mod fixes the _lobby glitch_ bug in Garfield Kart Furious Racing multiplayer games.
+Fixes the lobby glitch that causes Garfield Kart Furious Racing multiplayer games to get stuck on the results screen.
 
 ## Installation
 
 **Only the multiplayer host needs to install the mod.**
+
+### From Thunderstore
+
+1. Go to https://thunderstore.io/c/garfield-kart-furious-racing/p/mentalvary/LobbyGlitchFix/
+2. Install the mod using one of the common mod managers (e.g. r2modman, see pinned in https://thunderstore.io/c/garfield-kart-furious-racing/)
+
+### Manually
 
 1. Install BepInEx into the Garfield Kart game root folder
     * Grab latest 5.x release from https://github.com/BepInEx/BepInEx/releases
